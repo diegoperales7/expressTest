@@ -1,13 +1,11 @@
 const fs = require("fs");
+const Product =require("../models/Product");
 
 //Handlers
 
-exports.getAllProducts=(req, res) => {
-    const products = JSON.parse(
-      fs.readFileSync(`${__dirname}/../data/products.json`)
-    );
-    //console.log(req);
+exports.getAllProducts=async(req, res) => {
   
+    const products= await Product.find();
     res.status(200).json({
       status: "success",
       timeOfRequest:req.requestTime,
@@ -18,25 +16,24 @@ exports.getAllProducts=(req, res) => {
     });
   }
   
-exports.addProduct=(req,res)=>{
-    const products = JSON.parse(
-      fs.readFileSync(`${__dirname}/../data/products.json`)
-    );
-    products.push(req.body);
-    fs.writeFileSync(`${__dirname}/../data/products.json`,JSON.stringify(products));
+exports.addProduct= async(req,res)=>{
+
+  const newProduct=await Product.create(req.body);
+
+    
     res.status(200).json({
       status:"success",
       data:{
-        products,
+        product:newProduct,
       }
     });
 };
   
-exports.getProductById=(req, res) => {
-    const products = JSON.parse(
-      fs.readFileSync(`${__dirname}/../data/products.json`)
-    );
-    const foundProduct=products.find(p=>p.id==req.params.id);
+exports.getProductById=async(req, res) => {
+
+  const foundProduct=await Product.findById(req.params.id);
+   
+    //const foundProduct=products.find(p=>p.id==req.params.id);
     if(foundProduct){
         return res.status(200).json({
           status: "success",
@@ -86,12 +83,14 @@ exports.getProductById=(req, res) => {
     }    
   };
 
-  exports.updateProductById=(req, res) => {
-    const products = JSON.parse(
-      fs.readFileSync(`${__dirname}/../data/products.json`)
-    );
-    var newProduct=req.body;
-    var productsDelete=[];
+  exports.updateProductById=async(req, res) => {
+
+    const updateProduct=await Product.findByIdAndUpdate(req.params.id,req.body,{new:true});
+    // const products = JSON.parse(
+    //   fs.readFileSync(`${__dirname}/../data/products.json`)
+    // );
+    // var newProduct=req.body;
+    /*var productsDelete=[];
     let findValue=0;
     for (let [i,product] of products.entries()) {
 
@@ -103,18 +102,18 @@ exports.getProductById=(req, res) => {
         
       }
 
-    }
-    if(findValue){
+    }*/
+    if(updateProduct){
 
       return res.status(200).json({
         status: "success",
         data: {
-           products:products,
+           product:updateProduct,
         }
       });  
-    }else{
+    }/*else{
       res.status(404).json({
         status: "not found"
       });
-    }    
+    } */  
   };
