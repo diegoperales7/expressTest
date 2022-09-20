@@ -1,9 +1,10 @@
 const fs = require("fs");
 const Product =require("../models/Product");
+const catchAsync =require("../utils/catchAsync");
 
 //Handlers
 
-exports.getAllProducts=async(req, res) => {
+exports.getAllProducts=catchAsync(async(req, res) => {
   
     const products= await Product.find();
     res.status(200).json({
@@ -14,25 +15,20 @@ exports.getAllProducts=async(req, res) => {
         products,
       },
     });
-  }
+  });
   
-exports.addProduct= async(req,res)=>{
-
-  const newProduct=await Product.create(req.body);
-
-    
+exports.addProduct= catchAsync(async(req,res)=>{
+  const newProduct=await Product.create(req.body);  
     res.status(200).json({
       status:"success",
       data:{
         product:newProduct,
       }
     });
-};
+});
   
-exports.getProductById=async(req, res) => {
-
+exports.getProductById= catchAsync(async(req, res) => {
   const foundProduct=await Product.findById(req.params.id);
-   
     //const foundProduct=products.find(p=>p.id==req.params.id);
     if(foundProduct){
         return res.status(200).json({
@@ -46,7 +42,7 @@ exports.getProductById=async(req, res) => {
     res.status(404).json({
       status: "not found"
     });
-  };
+  });
   
 
   exports.deleteProductById=(req, res) => {
@@ -83,7 +79,7 @@ exports.getProductById=async(req, res) => {
     }    
   };
 
-  exports.updateProductById=async(req, res) => {
+  exports.updateProductById=catchAsync(async(req, res) => {
 
     const updateProduct=await Product.findByIdAndUpdate(req.params.id,req.body,{new:true});
     // const products = JSON.parse(
@@ -116,4 +112,4 @@ exports.getProductById=async(req, res) => {
         status: "not found"
       });
     } */  
-  };
+  });
