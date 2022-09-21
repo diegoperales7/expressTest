@@ -1,17 +1,19 @@
 const express=require("express");
 const userController=require("./../controllers/userController");
+const authController=require("./../controllers/authController");
+
 const userRouter=express.Router();
 
 //Routes
 userRouter
     .route("/")
-    //.get(userController.getAllUsers)
+    .all(authController.protect)
+    .get(userController.getAllUsers)
     .post(userController.addUser);
-//productRouter.post("/",addProduct);
-/*productRouter.route("/:id")
-    .get(userController.getProductById)
-    .delete(userController.deleteProductById)
-    .put(userController.updateProductById);*/
-//
+userRouter.route("/:id")
+    //.all(authController.protect)
+    .get(userController.getUserById)
+    .delete(userController.deleteUserById)
+    .put(userController.updateUserById);
 
 module.exports= userRouter;  

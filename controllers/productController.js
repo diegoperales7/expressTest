@@ -45,39 +45,23 @@ exports.getProductById= catchAsync(async(req, res) => {
   });
   
 
-  exports.deleteProductById=(req, res) => {
-    const products = JSON.parse(
-      fs.readFileSync(`${__dirname}/../data/products.json`)
-    );
-    var productsDelete=[];
-    let findValue=0;
-    for (let [i,product] of products.entries()) {
-
-      if(product.id == req.params.id) {
-     
-        delete products[i];
-        findValue=1;
-        
-      } else {
-        productsDelete.push(product);
-
-      }
-
-    }
-    if(findValue){
-
+  exports.deleteProductById=catchAsync(async(req, res) => {
+    const id = req.params.id;
+    const deleteProduct = await Product.deleteOne({_id: id})
+    if(foundProduct){
       return res.status(200).json({
-        status: "success",
+        status: "Success, Delete Product!",
         data: {
-           products:productsDelete,
+           products:deleteProduct,
         }
       });  
     }else{
-      res.status(404).json({
-        status: "not found"
-      });
-    }    
-  };
+        res.status(404).json({
+          status: "not found"
+        });
+    }
+
+  });
 
   exports.updateProductById=catchAsync(async(req, res) => {
 

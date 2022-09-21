@@ -10,9 +10,9 @@ const productSchema=new mongoose.Schema({
         required:[true,"price is required"]
         
     },
-    description:{
-        type:String,
-        required:false
+    quantity:{
+        type:Number,
+        required:true
         
     }
 

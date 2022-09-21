@@ -5,18 +5,18 @@ const catchAsync =require("../utils/catchAsync");
 
 //Handlers
 
-/*exports.getAllProducts=catchAsync(async(req, res) => {
+exports.getAllUsers=catchAsync(async(req, res) => {
   
-    const products= await Product.find();
+    const users= await User.find();
     res.status(200).json({
       status: "success",
       timeOfRequest:req.requestTime,
-      results: products.length,
+      results: users.length,
       data: {     
-        products,
+        users,
       },
     });
-  });*/
+  });
   
 exports.addUser= catchAsync(async(req,res)=>{
     req.body.password=crypto
@@ -36,89 +36,55 @@ exports.addUser= catchAsync(async(req,res)=>{
     });
 });
   
-/*exports.getProductById= catchAsync(async(req, res) => {
-  const foundProduct=await Product.findById(req.params.id);
-    //const foundProduct=products.find(p=>p.id==req.params.id);
-    if(foundProduct){
+exports.getUserById= catchAsync(async(req, res) => {
+  const foundUser=await User.findById(req.params.id);
+    if(foundUser){
         return res.status(200).json({
           status: "success",
           data: {
-             products:foundProduct,
+             users:foundUser,
           },
         });  
+    }else{
+
+      res.status(404).json({
+        status: "not found",
+      });
     }
-    //console.log(req.params);
-    res.status(404).json({
-      status: "not found"
-    });
   });
   
 
-  exports.deleteProductById=(req, res) => {
-    const products = JSON.parse(
-      fs.readFileSync(`${__dirname}/../data/products.json`)
-    );
-    var productsDelete=[];
-    let findValue=0;
-    for (let [i,product] of products.entries()) {
-
-      if(product.id == req.params.id) {
-     
-        delete products[i];
-        findValue=1;
-        
-      } else {
-        productsDelete.push(product);
-
-      }
-
-    }
-    if(findValue){
+  exports.deleteUserById=catchAsync(async(req, res) => {
+    const id = req.params.id;
+    const deleteUser = await User.deleteOne({_id: id})
+    if(deleteUser){
 
       return res.status(200).json({
         status: "success",
         data: {
-           products:productsDelete,
+           users:deleteUser,
+        }
+      });  
+    }
+    res.status(404).json({
+      status: "not found"
+    });
+      
+  });
+
+  exports.updateUserById=catchAsync(async(req, res) => {
+    const updateUser=await User.findByIdAndUpdate(req.params.id,req.body,{new:true});
+    if(updateUser){
+
+      return res.status(200).json({
+        status: "success",
+        data: {
+           user:updateUser,
         }
       });  
     }else{
       res.status(404).json({
         status: "not found"
       });
-    }    
-  };
-*/
-  /*exports.updateProductById=catchAsync(async(req, res) => {
-
-    const updateProduct=await Product.findByIdAndUpdate(req.params.id,req.body,{new:true});*/
-    // const products = JSON.parse(
-    //   fs.readFileSync(`${__dirname}/../data/products.json`)
-    // );
-    // var newProduct=req.body;
-    /*var productsDelete=[];
-    let findValue=0;
-    for (let [i,product] of products.entries()) {
-
-      if(product.id == req.params.id) {
-     
-        newProduct.id=req.params.id;
-         products[i]=newProduct;
-        findValue=1;
-        
-      }
-
-    }*/
-    /*if(updateProduct){
-
-      return res.status(200).json({
-        status: "success",
-        data: {
-           product:updateProduct,
-        }
-      });  
-    }*//*else{
-      res.status(404).json({
-        status: "not found"
-      });
-    } */  
- // });
+    } 
+ });
